@@ -19,5 +19,12 @@ namespace cross_capture {
 		 * @returns window title.
 		 */
 		[[nodiscard]] std::wstring get_window_title() const;
+
+		/**
+		 * Get window data.
+		 *
+		 * @returns window data
+		 */
+		[[nodiscard]] platform::WindowData get_window_data() const;
 	};
 }

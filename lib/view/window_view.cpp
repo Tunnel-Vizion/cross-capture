@@ -17,4 +17,8 @@ namespace cross_capture {
 		// data
 		return platform::get_window_title(window_data_.handle);
 	}
+
+	platform::WindowData WindowView::get_window_data() const {
+		return window_data_;
+	}
 }

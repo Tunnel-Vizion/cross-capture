@@ -6,4 +6,7 @@ namespace cross_capture {
 		
 	}
 
+	platform::MonitorData MonitorView::get_monitor_data() const {
+		return monitor_data_;
+	}
 }

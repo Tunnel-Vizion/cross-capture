@@ -8,5 +8,12 @@ namespace cross_capture {
 		const platform::MonitorData monitor_data_;
 	public:
 		explicit MonitorView(platform::MonitorData monitor_data);
+
+		/**
+		 * Get monitor data.
+		 *
+		 * @returns monitor data.
+		 */
+		[[nodiscard]] platform::MonitorData get_monitor_data() const;
 	};
 }
