@@ -29,7 +29,7 @@ namespace cross_capture::capture_device {
 		
 		virtual bool init() = 0;
 		
-		virtual capture capture(const View* view) = 0;
+		virtual capture do_capture(const View* view) = 0;
 	};
 
 	std::unique_ptr<Device> get_suitable_capture_device();
