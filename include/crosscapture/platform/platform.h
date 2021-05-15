@@ -10,6 +10,7 @@ namespace cross_capture::platform {
 	/// window related garbage ///
 #ifdef _WIN32
 	using window_handle_t = HWND;
+	using monitor_handle_t = HMONITOR;
 #else
 	using window_handle_t = size_t;
 #endif
@@ -35,6 +36,14 @@ namespace cross_capture::platform {
 		// window title
 		std::wstring title;
 	};
+
+	/**
+	 * Container for monitor data.
+	 */
+	struct MonitorData {
+		// monitor handle
+		monitor_handle_t handle;
+	};
 	
 	/**
 	 * Enumerates all windows on platform.
@@ -45,6 +54,13 @@ namespace cross_capture::platform {
 	 */
 	extern std::vector<WindowData> enumerate_windows(WindowEnumerateFilter filter);
 
+	/**
+	 * Enumerates all monitors connected to machine.
+	 *
+	 * @returns vector of all monitors found.
+	 */
+	extern std::vector<MonitorData> enumerate_monitors();
+	
 	/**
 	 * Returns name of window.
 	 *

@@ -2,11 +2,13 @@
 #include <iostream>
 
 int main(int argc, char* argv[]) {
+	// Example screen-capture
+
 	const cross_capture::platform::WindowEnumerateFilter params;
 	
 	for (const auto& window_title : enumerate_windows(params)) {
 		std::wcout << window_title.handle << " | " << window_title.title << std::endl;
 	}
-
+	
 	return 0;
 }
