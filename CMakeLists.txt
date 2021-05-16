@@ -13,6 +13,7 @@ include_directories(include)
 if (WIN32)
 	set(PLATFORM_DIR "win")
 	set(PLATFORM_LIBS gdiplus)
+	add_definitions(-D_UNICODE -DUNICODE)
 endif(WIN32)
 
 # Build library

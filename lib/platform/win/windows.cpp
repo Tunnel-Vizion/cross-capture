@@ -114,7 +114,7 @@ namespace cross_capture::platform {
 		return IsWindow(window_handle);
 	}
 
-	bool debug_save_bmp(std::string file_name, capture_device::CapturedFrame capture) {
+	bool debug_save_bmp(std::wstring file_name, capture_device::CapturedFrame capture) {
 		BITMAPFILEHEADER bmf_header;
 		BITMAPINFOHEADER bi;
 
@@ -130,7 +130,7 @@ namespace cross_capture::platform {
 		bi.biClrUsed = 0;
 		bi.biClrImportant = 0;
 
-		auto* const file = CreateFile(std::string(file_name + ".bmp").c_str(),
+		auto* const file = CreateFile(std::wstring(file_name + L".bmp").c_str(),
 			GENERIC_WRITE,
 			0,
 			nullptr,
@@ -139,16 +139,16 @@ namespace cross_capture::platform {
 			nullptr);
 
 		DWORD dw_bytes_written = 0;
-		const DWORD dw_bmp_size = capture.image_size;
+		const DWORD dw_bmp_size = static_cast<DWORD>(capture.image_size);
 		const DWORD dw_sizeof_dib = dw_bmp_size + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
 
 		bmf_header.bfOffBits = static_cast<DWORD>(sizeof(BITMAPFILEHEADER)) + static_cast<DWORD>(sizeof(BITMAPINFOHEADER));
 		bmf_header.bfSize = dw_sizeof_dib;
 		bmf_header.bfType = 0x4D42;
 
-		WriteFile(file, LPSTR(&bmf_header), sizeof(BITMAPFILEHEADER), &dw_bytes_written, nullptr);
-		WriteFile(file, LPSTR(&bi), sizeof(BITMAPINFOHEADER), &dw_bytes_written, nullptr);
-		WriteFile(file, LPSTR(&capture.data[0]), dw_bmp_size, &dw_bytes_written, nullptr);
+		WriteFile(file, LPWSTR(&bmf_header), sizeof(BITMAPFILEHEADER), &dw_bytes_written, nullptr);
+		WriteFile(file, LPWSTR(&bi), sizeof(BITMAPINFOHEADER), &dw_bytes_written, nullptr);
+		WriteFile(file, LPWSTR(&capture.data[0]), dw_bmp_size, &dw_bytes_written, nullptr);
 
 		CloseHandle(file);
 

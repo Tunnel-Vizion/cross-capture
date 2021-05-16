@@ -52,28 +52,28 @@ namespace cross_capture {
 		 */
 		struct MonitorData {
 			// monitor handle
-			monitor_handle_t handle;
+			monitor_handle_t handle = nullptr;
 
 			// monitor title
-			std::string name;
+			std::wstring name {};
 
 			// monitor width
-			long width;
+			long width = 0;
 
 			// monitor height
-			long height;
+			long height = 0;
 
 			// top coord
-			long top;
+			long top = 0;
 
 			// left coord
-			long left;
+			long left = 0;
 
 			// right coord
-			long right;
+			long right = 0;
 
 			// bottom coord
-			long bottom;
+			long bottom = 0;
 		};
 
 		/**
@@ -113,6 +113,6 @@ namespace cross_capture {
 		/**
 		 * **DEBUG METHOD (not standard and will be moved)**
 		 */
-		extern bool debug_save_bmp(std::string file_name, capture_device::CapturedFrame capture);
+		extern bool debug_save_bmp(std::wstring file_name, capture_device::CapturedFrame capture);
 	}
 }

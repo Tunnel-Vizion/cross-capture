@@ -9,10 +9,12 @@ namespace cross_capture::capture_device {
 	CapturedFrame GDIDevice::do_monitor_capture(const MonitorView* view) {
 		auto* const monitor_data = view->get_monitor_data();
 
-		hdc_ = CreateDC(nullptr, monitor_data->name.c_str(), nullptr, nullptr);
-
 		if (!hdc_) {
-			throw std::runtime_error("failed to create monitor view!");
+			hdc_ = CreateDC(nullptr, monitor_data->name.c_str(), nullptr, nullptr);
+
+			if (!hdc_) {
+				throw std::runtime_error("failed to create monitor view!");
+			}
 		}
 
 		auto* const monitor_compat_dc = CreateCompatibleDC(hdc_);
@@ -74,7 +76,7 @@ namespace cross_capture::capture_device {
 			DIB_RGB_COLORS);
 		
 		DeleteDC(monitor_compat_dc);
-		DeleteDC(hdc_);
+		//DeleteDC(hdc_);
 		return cap;
 	}
 
