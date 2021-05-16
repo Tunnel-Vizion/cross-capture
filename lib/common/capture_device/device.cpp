@@ -1,15 +1,10 @@
-#include "crosscapture/view/window_view.h"
-#include "crosscapture/view/monitor_view.h"
-#include "crosscapture/capture_device/device.h"
+#include "crosscapture/common/view/window_view.h"
+#include "crosscapture/common/view/monitor_view.h"
+#include "crosscapture/common/capture_device/device.h"
+#include "crosscapture/platform/win/dxgi_device.h"
+#include "crosscapture/platform/win/dgi_device.h"
 
 #include <stdexcept>
-
-#include "crosscapture/capture_device/dgi_device.h"
-
-// TODO: Make this better
-#ifdef _WIN32
-#include "crosscapture/capture_device/dxgi_device.h"
-#endif
 
 namespace cross_capture::capture_device {
 	CapturedFrame Device::do_capture(const View* view) {
@@ -26,9 +21,9 @@ namespace cross_capture::capture_device {
 		default: throw std::runtime_error("TODO: better exception message...");
 		}
 	}
-
-
+	
 	std::unique_ptr<Device> get_suitable_capture_device() {
+		// TODO: Make this generic...
 #ifdef WIN32
 		auto gdi_device = std::make_unique<GDIDevice>();
 

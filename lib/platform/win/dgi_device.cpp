@@ -1,15 +1,21 @@
-#include "crosscapture/capture_device/dgi_device.h"
-#include "crosscapture/view/monitor_view.h"
-
-#ifdef WIN32
+#include "crosscapture/platform/win/dgi_device.h"
+#include "crosscapture/common/view/monitor_view.h"
+#include "crosscapture/common/view/window_view.h"
 
 #include <GdiplusInit.h>
+#include <stdexcept>
 
 namespace cross_capture::capture_device {
 	CapturedFrame GDIDevice::do_monitor_capture(const MonitorView* view) {
 		auto* const monitor_data = view->get_monitor_data();
-		auto* const monitor_dc = view->get_hdc();
-		auto* const monitor_compat_dc = CreateCompatibleDC(monitor_dc);
+
+		hdc_ = CreateDC(nullptr, monitor_data->name.c_str(), nullptr, nullptr);
+
+		if (!hdc_) {
+			throw std::runtime_error("failed to create monitor view!");
+		}
+
+		auto* const monitor_compat_dc = CreateCompatibleDC(hdc_);
 		
 		SetStretchBltMode(monitor_compat_dc, HALFTONE);
 		
@@ -32,7 +38,7 @@ namespace cross_capture::capture_device {
 		bitmap_info.biClrUsed = 0;
 		bitmap_info.biClrImportant = 0;
 
-		auto* const bitmap = CreateCompatibleBitmap(monitor_dc, width, height);
+		auto* const bitmap = CreateCompatibleBitmap(hdc_, width, height);
 	
 		SelectObject(monitor_compat_dc, bitmap);
 
@@ -51,7 +57,7 @@ namespace cross_capture::capture_device {
 			0,
 			width, 
 			height, 
-			monitor_dc, 
+			hdc_,
 			top,
 			0, 
 			width, 
@@ -68,6 +74,7 @@ namespace cross_capture::capture_device {
 			DIB_RGB_COLORS);
 		
 		DeleteDC(monitor_compat_dc);
+		DeleteDC(hdc_);
 		return cap;
 	}
 
@@ -98,4 +105,3 @@ namespace cross_capture::capture_device {
 		return true;
 	}
 }
-#endif

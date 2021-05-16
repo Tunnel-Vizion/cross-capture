@@ -10,10 +10,17 @@ set(CMAKE_CXX_STANDARD 17)
 # Include dir
 include_directories(include)
 
-# Build library
-file(GLOB_RECURSE LIB_SOURCE_FILES CONFIGURE_DEPENDS lib/*.cpp)
+if (WIN32)
+	set(PLATFORM_DIR "win")
+	set(PLATFORM_LIBS gdiplus)
+endif(WIN32)
 
-add_library(core ${LIB_SOURCE_FILES})
+# Build library
+file(GLOB_RECURSE PLATFORM_LIB_SOURCE_FILES CONFIGURE_DEPENDS lib/platform/${PLATFORM_DIR}/*.cpp)
+file(GLOB_RECURSE LIB_SOURCE_FILES CONFIGURE_DEPENDS lib/common/*.cpp)
+
+add_library(core ${LIB_SOURCE_FILES} ${PLATFORM_LIB_SOURCE_FILES})
+target_link_libraries(core ${PLATFORM_LIBS})
 
 # Build executable
 file(GLOB_RECURSE EXE_SOURCE_FILES COFIGURE_DEPENDS src/*.cpp)

@@ -1,11 +1,8 @@
 #include <stdexcept>
 
 #include "crosscapture/platform/platform.h"
-#include "crosscapture/capture_device/device.h"
+#include "crosscapture/common/capture_device/device.h"
 
-// TODO: This is an ugly guard...we should use CMake to make sure this isn't necessary
-// to do.
-#ifdef _WIN32
 namespace {
 	struct EnumerateWindowsCallbackStruct {
 		cross_capture::platform::WindowEnumerateFilter filter;
@@ -122,8 +119,8 @@ namespace cross_capture::platform {
 		BITMAPINFOHEADER bi;
 
 		bi.biSize = sizeof(BITMAPINFOHEADER);
-		bi.biWidth = capture.width;
-		bi.biHeight = capture.height;
+		bi.biWidth = static_cast<long>(capture.width);
+		bi.biHeight = static_cast<long>(capture.height);
 		bi.biPlanes = 1;
 		bi.biBitCount = 32;
 		bi.biCompression = BI_RGB;
@@ -141,9 +138,9 @@ namespace cross_capture::platform {
 			FILE_ATTRIBUTE_NORMAL, 
 			nullptr);
 
-		const auto dw_bmp_size = capture.image_size;
 		DWORD dw_bytes_written = 0;
-		const auto dw_sizeof_dib = dw_bmp_size + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+		const DWORD dw_bmp_size = capture.image_size;
+		const DWORD dw_sizeof_dib = dw_bmp_size + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
 
 		bmf_header.bfOffBits = static_cast<DWORD>(sizeof(BITMAPFILEHEADER)) + static_cast<DWORD>(sizeof(BITMAPINFOHEADER));
 		bmf_header.bfSize = dw_sizeof_dib;
@@ -158,4 +155,3 @@ namespace cross_capture::platform {
 		return true;
 	}
 }
-#endif

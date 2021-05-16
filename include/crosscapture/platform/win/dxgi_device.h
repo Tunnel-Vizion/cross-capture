@@ -1,9 +1,8 @@
 #pragma once
 
-#ifdef WIN32
-#include <d3d11.h>
+#include "crosscapture/common/capture_device/device.h"
 
-#include "device.h"
+#include <d3d11.h>
 
 namespace cross_capture::capture_device {
 	class DXGIDevice : public Device {
@@ -27,4 +26,3 @@ namespace cross_capture::capture_device {
 		bool init() override;
 	};
 }
-#endif

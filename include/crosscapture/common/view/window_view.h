@@ -3,7 +3,7 @@
 #include <string>
 
 #include "view.h"
-#include "../platform/platform.h"
+#include "../../platform/platform.h"
 
 namespace cross_capture {
 	class WindowView : public View {

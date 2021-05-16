@@ -1,4 +1,4 @@
-#include "crosscapture/capture_device/dxgi_device.h"
+#include "crosscapture/platform/win/dxgi_device.h"
 
 namespace cross_capture::capture_device {
 	DXGIDevice::DXGIDevice()
@@ -11,7 +11,7 @@ namespace cross_capture::capture_device {
 	}
 	
 	bool DXGIDevice::init() {
-		if (!create_d3d_device()) {
+		if (FAILED(create_d3d_device())) {
 			return false;
 		}
 		

@@ -1,6 +1,6 @@
-#include <utility>
+#include "crosscapture/common/view/window_view.h"
 
-#include "crosscapture/view/window_view.h"
+#include <utility>
 
 namespace cross_capture {
 	bool WindowView::is_window_destroyed() const {

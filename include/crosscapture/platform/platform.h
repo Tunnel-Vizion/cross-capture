@@ -3,6 +3,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 #endif
+
 #include <memory>
 #include <vector>
 #include <string>
@@ -21,6 +22,7 @@ namespace cross_capture {
 		using monitor_hdc = std::unique_ptr<std::remove_pointer<HDC>::type, BOOL(*)(HDC)>;
 #else
 		using window_handle_t = size_t;
+		using monitor_handle_t = size_t; // TODO: update
 #endif
 
 		/**
