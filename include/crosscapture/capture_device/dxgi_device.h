@@ -1,5 +1,6 @@
 #pragma once
 
+#ifdef WIN32
 #include <d3d11.h>
 
 #include "device.h"
@@ -26,3 +27,4 @@ namespace cross_capture::capture_device {
 		bool init() override;
 	};
 }
+#endif

@@ -1,6 +1,7 @@
 #include <stdexcept>
 
 #include "crosscapture/platform/platform.h"
+#include "crosscapture/capture_device/device.h"
 
 // TODO: This is an ugly guard...we should use CMake to make sure this isn't necessary
 // to do.
@@ -30,9 +31,10 @@ namespace {
 		if (!callback_struct.filter.include_empty_titles && wcslen(window_title) == 0) {
 			return TRUE;
 		}
+		
 		callback_struct.result_vec.emplace_back(cross_capture::platform::WindowData {
 			window_handle,
-			window_title
+			window_title,
 		});
 		
 		return TRUE;
@@ -45,9 +47,28 @@ namespace {
 		const LPARAM result) {
 		auto& callback_struct = *reinterpret_cast<EnumerateMonitorsCallbackStruct*>(result);
 
-		callback_struct.result_vec.push_back(cross_capture::platform::MonitorData{
-			monitor_handle
-		});
+		MONITORINFOEX monitor_info = { 0 };
+		monitor_info.cbSize = sizeof(monitor_info);
+
+		if (GetMonitorInfo(monitor_handle, &monitor_info)) {
+			auto* dc = CreateDC(nullptr, monitor_info.szDevice, nullptr, nullptr);
+			if (dc) {
+				const auto rc_monitor = monitor_info.rcMonitor;
+
+				callback_struct.result_vec.emplace_back(cross_capture::platform::MonitorData {
+					monitor_handle,
+					monitor_info.szDevice,
+					rc_monitor.right - rc_monitor.left,
+					rc_monitor.bottom - rc_monitor.top,
+					rc_monitor.top,
+					rc_monitor.left,
+					rc_monitor.right,
+					rc_monitor.bottom,
+				});
+				
+				DeleteDC(dc);
+			}
+		}
 		
 		return TRUE;
 	}
@@ -81,7 +102,7 @@ namespace cross_capture::platform {
 			throw std::runtime_error("unable to enumerate monitors");
 		}
 	
-		return std::move(callback_struct.result_vec);
+		return callback_struct.result_vec;
 	}
 	
 	std::wstring get_window_title(const window_handle_t window_handle) {
@@ -94,6 +115,47 @@ namespace cross_capture::platform {
 
 	bool is_window_handle_valid(const window_handle_t window_handle) {
 		return IsWindow(window_handle);
+	}
+
+	bool debug_save_bmp(std::string file_name, capture_device::CapturedFrame capture) {
+		BITMAPFILEHEADER bmf_header;
+		BITMAPINFOHEADER bi;
+
+		bi.biSize = sizeof(BITMAPINFOHEADER);
+		bi.biWidth = capture.width;
+		bi.biHeight = capture.height;
+		bi.biPlanes = 1;
+		bi.biBitCount = 32;
+		bi.biCompression = BI_RGB;
+		bi.biSizeImage = 0;
+		bi.biXPelsPerMeter = 0;
+		bi.biYPelsPerMeter = 0;
+		bi.biClrUsed = 0;
+		bi.biClrImportant = 0;
+
+		auto* const file = CreateFile(std::string(file_name + ".bmp").c_str(),
+			GENERIC_WRITE,
+			0,
+			nullptr,
+			CREATE_ALWAYS,
+			FILE_ATTRIBUTE_NORMAL, 
+			nullptr);
+
+		const auto dw_bmp_size = capture.image_size;
+		DWORD dw_bytes_written = 0;
+		const auto dw_sizeof_dib = dw_bmp_size + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+
+		bmf_header.bfOffBits = static_cast<DWORD>(sizeof(BITMAPFILEHEADER)) + static_cast<DWORD>(sizeof(BITMAPINFOHEADER));
+		bmf_header.bfSize = dw_sizeof_dib;
+		bmf_header.bfType = 0x4D42;
+
+		WriteFile(file, LPSTR(&bmf_header), sizeof(BITMAPFILEHEADER), &dw_bytes_written, nullptr);
+		WriteFile(file, LPSTR(&bi), sizeof(BITMAPINFOHEADER), &dw_bytes_written, nullptr);
+		WriteFile(file, LPSTR(&capture.data[0]), dw_bmp_size, &dw_bytes_written, nullptr);
+
+		CloseHandle(file);
+
+		return true;
 	}
 }
 #endif
