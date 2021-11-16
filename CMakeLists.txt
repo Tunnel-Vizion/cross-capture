@@ -14,6 +14,9 @@ if (WIN32)
 	set(PLATFORM_DIR "win")
 	set(PLATFORM_LIBS gdiplus)
 	add_definitions(-D_UNICODE -DUNICODE)
+elseif(APPLE)
+	set(PLATFORM_DIR "osx")
+	set(PLATFORM_LIBS )
 endif(WIN32)
 
 # Build library

@@ -1,7 +1,11 @@
 #pragma once
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
+#define CC_PLATFORM_WIN
 #include <Windows.h>
+#elif defined(__APPLE__)
+#define CC_PLATFORM_OSX
+#include <ApplicationServices/ApplicationServices.h>
 #endif
 
 #include <memory>
@@ -15,11 +19,14 @@ namespace cross_capture {
 	
 	namespace platform {
 		/// window related garbage ///
-#ifdef _WIN32
+#ifdef CC_PLATFORM_WIN
 		using window_handle_t = HWND;
 		using monitor_handle_t = HMONITOR;
 
 		using monitor_hdc = std::unique_ptr<std::remove_pointer<HDC>::type, BOOL(*)(HDC)>;
+#elif defined(CC_PLATFORM_OSX)
+		using window_handle_t = CGWindowID;
+		using monitor_handle_t = CGDirectDisplayID;
 #else
 		using window_handle_t = size_t;
 		using monitor_handle_t = size_t; // TODO: update
@@ -51,8 +58,12 @@ namespace cross_capture {
 		 * Container for monitor data.
 		 */
 		struct MonitorData {
+#ifdef CC_PLATFORM_OSX
 			// monitor handle
+			monitor_handle_t handle = 0;
+#else
 			monitor_handle_t handle = nullptr;
+#endif
 
 			// monitor title
 			std::wstring name {};
