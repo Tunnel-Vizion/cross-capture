@@ -3,9 +3,9 @@ Cross Capture (cc for short) is a lightweight cross-platform screen capture libr
 
 # Motivations
 
-It comes in response to a lack of open-source and decoupled screen capturing libraries. Most existing full-featured screen capture libraries are tied up in OBS and WebRTC, or are cumbersome like FFmpeg.
+It comes in response to a lack of open-source and decoupled screen capturing libraries. Most existing screen capture libraries are tied up in OBS and WebRTC, or are cumbersome like FFmpeg.
 
-To follow the KISS (keep it simple, stupid) principle, this library **only** implements screen capturing capabilities and exposes an API.
+To follow the KISS (keep it simple, stupid) principle, this library **only** implements screen capturing capabilities and exposes an api.
 
 # Features
 
