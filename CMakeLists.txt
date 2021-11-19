@@ -14,7 +14,12 @@ if (WIN32)
 	set(PLATFORM_DIR "win")
 	set(PLATFORM_LIBS gdiplus)
 	add_definitions(-D_UNICODE -DUNICODE)
-endif(WIN32)
+elseif(APPLE)
+	set(PLATFORM_DIR "osx")
+
+	find_library(APP_SERVICES_LIB ApplicationServices)
+	set(PLATFORM_LIBS ${APP_SERVICES_LIB})
+endif()
 
 # Build library
 file(GLOB_RECURSE PLATFORM_LIB_SOURCE_FILES CONFIGURE_DEPENDS lib/platform/${PLATFORM_DIR}/*.cpp)

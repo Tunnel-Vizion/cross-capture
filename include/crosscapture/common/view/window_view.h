@@ -1,30 +1,40 @@
 #pragma once
 
-#include <string>
-
 #include "view.h"
 #include "../../platform/platform.h"
 
 namespace cross_capture {
-	class WindowView : public View {
-		const platform::WindowData window_data_;
-
-		[[nodiscard]] bool is_window_destroyed() const;
+	class WindowView final : public View {
+		platform::WindowData* window_data_;
 	public:
-		explicit WindowView(platform::WindowData window_handle);
+		explicit WindowView(platform::WindowData* window_handle);
 
 		/**
-		 * Get title of window being viewed.
-		 *
-		 * @returns window title.
+		 * Returns unique identifier of the view.
+		 * 
+		 * @returns unique identifier of the view.
 		 */
-		[[nodiscard]] std::wstring get_window_title() const;
+		size_t get_id() const override;
+
+		/**
+		 * Returns name of the view.
+		 * 
+		 * @returns name of the view.
+		 */
+		std::wstring get_name() const override;
+
+		/**
+		 * Checks whether view is valid for capture.
+		 * 
+		 * @returns true if view is valid for capture, false otherwise.
+		 */
+		bool is_valid() const override;
 
 		/**
 		 * Get window data.
 		 *
 		 * @returns window data
 		 */
-		[[nodiscard]] platform::WindowData get_window_data() const;
+		[[nodiscard]] platform::WindowData* get_window_data() const;
 	};
 }
