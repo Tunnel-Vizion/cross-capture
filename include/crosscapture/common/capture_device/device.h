@@ -16,6 +16,7 @@ namespace cross_capture {
 			none,
 			win_gdi,
 			win_dxgi,
+			osx_quartz,
 		};
 
 		/**
@@ -89,13 +90,15 @@ namespace cross_capture {
 			 * Captures single frame from given view.
 			 *
 			 * @param view view to capture frame from.
+			 * @param num_frames number of frames to capture.
+			 * @param frame_delay delay between frames in milliseconds.
 			 *
 			 * @throws runtime_error if device is not initialized or
 			 * view is unrecognized.
 			 *
 			 * @returns captured frame.
 			 */
-			CapturedFrame do_capture(const View* view);
+			CapturedFrame do_capture(const View* view, const size_t num_frames = 1, const size_t frame_delay = 0);
 		};
 
 		/**

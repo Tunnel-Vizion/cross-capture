@@ -3,22 +3,26 @@
 #include <utility>
 
 namespace cross_capture {
-	bool WindowView::is_window_destroyed() const {
-		return platform::is_window_handle_valid(window_data_.handle);
-	}
-	
-	WindowView::WindowView(platform::WindowData window_handle)
-		: View(view_type::window), window_data_(std::move(window_handle)) {
+	WindowView::WindowView(platform::WindowData* window_data)
+		: View(view_type::window), window_data_(window_data) {
 		
 	}
 
-	std::wstring WindowView::get_window_title() const {
-		// TODO: review this method and the WindowData struct for duplicate
-		// data
-		return platform::get_window_title(window_data_.handle);
+	size_t WindowView::get_id() const {
+		return window_data_->handle; // like MonitorView, check this is suitable
 	}
 
-	platform::WindowData WindowView::get_window_data() const {
+	std::wstring WindowView::get_name() const {
+		// TODO: review this method and the WindowData struct for duplicate
+		// data
+		return platform::get_window_title(window_data_->handle);
+	}
+
+	bool WindowView::is_valid() const {
+		return platform::is_window_handle_valid(window_data_->handle);
+	}
+
+	platform::WindowData* WindowView::get_window_data() const {
 		return window_data_;
 	}
 }

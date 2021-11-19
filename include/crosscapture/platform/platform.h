@@ -1,7 +1,11 @@
 #pragma once
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
+#define CC_PLATFORM_WIN
 #include <Windows.h>
+#elif defined(__APPLE__)
+#define CC_PLATFORM_OSX
+#include <ApplicationServices/ApplicationServices.h>
 #endif
 
 #include <memory>
@@ -15,14 +19,23 @@ namespace cross_capture {
 	
 	namespace platform {
 		/// window related garbage ///
-#ifdef _WIN32
+#ifdef CC_PLATFORM_WIN
 		using window_handle_t = HWND;
 		using monitor_handle_t = HMONITOR;
 
 		using monitor_hdc = std::unique_ptr<std::remove_pointer<HDC>::type, BOOL(*)(HDC)>;
+
+		using monitor_dim = long;
+#elif defined(CC_PLATFORM_OSX)
+		using window_handle_t = CGWindowID;
+		using monitor_handle_t = CGDirectDisplayID;
+
+		using monitor_dim = double;
 #else
 		using window_handle_t = size_t;
 		using monitor_handle_t = size_t; // TODO: update
+
+		using monitor_dim = long;
 #endif
 
 		/**
@@ -51,17 +64,21 @@ namespace cross_capture {
 		 * Container for monitor data.
 		 */
 		struct MonitorData {
+#ifdef CC_PLATFORM_OSX
 			// monitor handle
+			monitor_handle_t handle = 0;
+#else
 			monitor_handle_t handle = nullptr;
+#endif
 
 			// monitor title
 			std::wstring name {};
 
 			// monitor width
-			long width = 0;
+			monitor_dim width = 0;
 
 			// monitor height
-			long height = 0;
+			monitor_dim height = 0;
 
 			// top coord
 			long top = 0;
@@ -109,6 +126,15 @@ namespace cross_capture {
 		 * @returns true if window handle is valid, otherwise false.
 		 */
 		extern bool is_window_handle_valid(window_handle_t window_handle);
+
+		/**
+		 * Verifies the state of a monitor handle.
+		 * 
+		 * @param monitor_handle handle of the monitor instance.
+		 * 
+		 * @returns true if monitor handle is valid, otherwise false.
+		 */
+		extern bool is_monitor_handle_valid(monitor_handle_t monitor_handle);
 
 		/**
 		 * **DEBUG METHOD (not standard and will be moved)**
