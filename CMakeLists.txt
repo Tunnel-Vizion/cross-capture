@@ -4,13 +4,16 @@ cmake_minimum_required(VERSION 3.10)
 # Project
 project(cross-capture VERSION 0.1.0 LANGUAGES CXX)
 
+# Settings
+option(CROSS_CAPTURE_BUILD_CLI "Build Command Line Tool" ON)
+
 # Set C++ Standard
 set(CMAKE_CXX_STANDARD 17)
 
 # Include dir
 include_directories(include)
 
-if (WIN32)
+if(WIN32)
 	set(PLATFORM_DIR "win")
 	set(PLATFORM_LIBS gdiplus)
 	add_definitions(-D_UNICODE -DUNICODE)
@@ -20,11 +23,13 @@ endif(WIN32)
 file(GLOB_RECURSE PLATFORM_LIB_SOURCE_FILES CONFIGURE_DEPENDS lib/platform/${PLATFORM_DIR}/*.cpp)
 file(GLOB_RECURSE LIB_SOURCE_FILES CONFIGURE_DEPENDS lib/common/*.cpp)
 
-add_library(core ${LIB_SOURCE_FILES} ${PLATFORM_LIB_SOURCE_FILES})
-target_link_libraries(core ${PLATFORM_LIBS})
+add_library(cc-lib ${LIB_SOURCE_FILES} ${PLATFORM_LIB_SOURCE_FILES})
+target_link_libraries(cc-lib ${PLATFORM_LIBS})
 
 # Build executable
-file(GLOB_RECURSE EXE_SOURCE_FILES COFIGURE_DEPENDS src/*.cpp)
+if(CROSS_CAPTURE_BUILD_CLI)
+	file(GLOB_RECURSE EXE_SOURCE_FILES COFIGURE_DEPENDS src/*.cpp)
 
-add_executable(cross-capture ${EXE_SOURCE_FILES})
-target_link_libraries(cross-capture core)
+	add_executable(cc-cli ${EXE_SOURCE_FILES})
+	target_link_libraries(cc-cli cc-lib)
+endif()

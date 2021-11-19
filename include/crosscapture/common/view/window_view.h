@@ -9,6 +9,12 @@ namespace cross_capture {
 	class WindowView : public View {
 		const platform::WindowData window_data_;
 
+		/**
+		 * Checks whether window instance is still available for 
+		 * capture.
+		 * 
+		 * @returns true if window is no longer in use.
+		 */
 		[[nodiscard]] bool is_window_destroyed() const;
 	public:
 		explicit WindowView(platform::WindowData window_handle);

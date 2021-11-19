@@ -1,4 +1,4 @@
-#include "crosscapture/platform/win/dgi_device.h"
+#include "crosscapture/platform/win/gdi_device.h"
 #include "crosscapture/common/view/monitor_view.h"
 #include "crosscapture/common/view/window_view.h"
 

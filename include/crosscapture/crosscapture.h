@@ -2,7 +2,7 @@
 
 #ifdef WIN32
 #include "crosscapture/platform/win/dxgi_device.h"
-#include "crosscapture/platform/win/dgi_device.h"
+#include "crosscapture/platform/win/gdi_device.h"
 #endif
 
 #include "crosscapture/platform/platform.h"
