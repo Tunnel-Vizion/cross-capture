@@ -24,12 +24,18 @@ namespace cross_capture {
 		using monitor_handle_t = HMONITOR;
 
 		using monitor_hdc = std::unique_ptr<std::remove_pointer<HDC>::type, BOOL(*)(HDC)>;
+
+		using monitor_dim = long;
 #elif defined(CC_PLATFORM_OSX)
 		using window_handle_t = CGWindowID;
 		using monitor_handle_t = CGDirectDisplayID;
+
+		using monitor_dim = double;
 #else
 		using window_handle_t = size_t;
 		using monitor_handle_t = size_t; // TODO: update
+
+		using monitor_dim = long;
 #endif
 
 		/**
@@ -69,10 +75,10 @@ namespace cross_capture {
 			std::wstring name {};
 
 			// monitor width
-			long width = 0;
+			monitor_dim width = 0;
 
 			// monitor height
-			long height = 0;
+			monitor_dim height = 0;
 
 			// top coord
 			long top = 0;
@@ -120,6 +126,15 @@ namespace cross_capture {
 		 * @returns true if window handle is valid, otherwise false.
 		 */
 		extern bool is_window_handle_valid(window_handle_t window_handle);
+
+		/**
+		 * Verifies the state of a monitor handle.
+		 * 
+		 * @param monitor_handle handle of the monitor instance.
+		 * 
+		 * @returns true if monitor handle is valid, otherwise false.
+		 */
+		extern bool is_monitor_handle_valid(monitor_handle_t monitor_handle);
 
 		/**
 		 * **DEBUG METHOD (not standard and will be moved)**

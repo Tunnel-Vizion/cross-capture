@@ -31,9 +31,21 @@
 *.out
 *.app
 
+# Misc
+.DS_Store
+
 # Visual Studio
 .vs/
+
+# Visual Studio Code
+.vscode/
+
+# CLion/Idea
+.idea/
 
 # Output
 out/
 build/
+
+# CMake
+cmake-build-debug/
