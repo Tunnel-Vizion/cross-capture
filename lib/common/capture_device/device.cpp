@@ -49,7 +49,7 @@ namespace cross_capture::capture_device {
 		auto quartz_device = std::make_unique<QuartzDevice>();
 
 		if (!quartz_device->init()) {
-			throw std::runtime_error("could not create quartz device");
+			throw std::runtime_error("could not create quartz device: " + quartz_device->get_error());
 		}
 		
 		return quartz_device;

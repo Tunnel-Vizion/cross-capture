@@ -14,7 +14,7 @@ namespace cross_capture {
 		return monitor_data_->handle; // TODO: check this is sufficient
 	}
 
-	std::wstring MonitorView::get_name() const {
+	platform::String MonitorView::get_name() const {
 		return monitor_data_->name;
 	}
 

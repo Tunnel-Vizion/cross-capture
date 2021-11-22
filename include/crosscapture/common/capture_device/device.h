@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include "crosscapture/platform/platform.h"
 
 namespace cross_capture {
 	class MonitorView;
@@ -45,6 +46,9 @@ namespace cross_capture {
 		protected:
 			// Initialized boolean
 			bool initialized_ = false;
+			
+			// Initialization error
+			platform::String error_;
 
 			explicit Device(const capture_device_type device_type)
 				: device_type_(device_type) {}
@@ -82,9 +86,16 @@ namespace cross_capture {
 			/**
 			 * Initialize capture device.
 			 *
-			 * @returns true if device is successfully initialized.
+			 * @returns true if device is successfully initialized, otherwise false.
 			 */
 			virtual bool init() = 0;
+
+			/**
+			 * Returns error string.
+			 * 
+			 * @returns error string.
+			 */
+			[[nodiscard]] const platform::String& get_error() const { return error_; }
 
 			/**
 			 * Captures single frame from given view.

@@ -102,19 +102,19 @@ namespace cross_capture::platform {
 		return callback_struct.result_vec;
 	}
 	
-	std::wstring get_window_title(const window_handle_t window_handle) {
+	platform::String get_window_title(const window_handle_t window_handle) {
 		wchar_t window_title[MAX_PATH];
 
 		GetWindowTextW(window_handle, window_title, MAX_PATH);
 
-		return std::wstring{ window_title };
+		return String{ window_title };
 	}
 
 	bool is_window_handle_valid(const window_handle_t window_handle) {
 		return IsWindow(window_handle);
 	}
 
-	bool debug_save_bmp(std::wstring file_name, capture_device::CapturedFrame capture) {
+	bool debug_save_bmp(platform::String file_name, capture_device::CapturedFrame capture) {
 		BITMAPFILEHEADER bmf_header;
 		BITMAPINFOHEADER bi;
 
@@ -130,7 +130,7 @@ namespace cross_capture::platform {
 		bi.biClrUsed = 0;
 		bi.biClrImportant = 0;
 
-		auto* const file = CreateFile(std::wstring(file_name + L".bmp").c_str(),
+		auto* const file = CreateFile(String(file_name + L".bmp").c_str(),
 			GENERIC_WRITE,
 			0,
 			nullptr,

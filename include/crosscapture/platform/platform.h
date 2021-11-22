@@ -26,16 +26,20 @@ namespace cross_capture {
 		using monitor_hdc = std::unique_ptr<std::remove_pointer<HDC>::type, BOOL(*)(HDC)>;
 
 		using monitor_dim = long;
+		using String = std::wstring;
 #elif defined(CC_PLATFORM_OSX)
 		using window_handle_t = CGWindowID;
 		using monitor_handle_t = CGDirectDisplayID;
 
 		using monitor_dim = double;
+		using String = std::string;
+		#define ToString(x) std::to_string(x)
 #else
 		using window_handle_t = size_t;
 		using monitor_handle_t = size_t; // TODO: update
 
 		using monitor_dim = long;
+		using String = std::string;
 #endif
 
 		/**
@@ -57,7 +61,7 @@ namespace cross_capture {
 			window_handle_t handle;
 
 			// window title
-			std::wstring title;
+			platform::String title;
 		};
 
 		/**
@@ -72,7 +76,7 @@ namespace cross_capture {
 #endif
 
 			// monitor title
-			std::wstring name {};
+			platform::String name {};
 
 			// monitor width
 			monitor_dim width = 0;
@@ -116,7 +120,7 @@ namespace cross_capture {
 		 *
 		 * @returns window title.
 		 */
-		extern std::wstring get_window_title(window_handle_t window_handle);
+		extern platform::String get_window_title(window_handle_t window_handle);
 
 		/**
 		 * Verifies the state of a window handle.
@@ -139,6 +143,6 @@ namespace cross_capture {
 		/**
 		 * **DEBUG METHOD (not standard and will be moved)**
 		 */
-		extern bool debug_save_bmp(std::wstring file_name, capture_device::CapturedFrame capture);
+		extern bool debug_save_bmp(platform::String file_name, capture_device::CapturedFrame capture);
 	}
 }

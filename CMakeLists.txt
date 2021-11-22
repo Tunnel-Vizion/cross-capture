@@ -22,6 +22,10 @@ elseif(APPLE)
 
 	find_library(APP_SERVICES_LIB ApplicationServices)
 	set(PLATFORM_LIBS ${APP_SERVICES_LIB})
+
+	if (CROSS_CAPTURE_BUILD_CLI)
+		add_definitions(-DOSX_REQUEST_CAPTURE_ACCESS)
+	endif(CROSS_CAPTURE_BUILD_CLI)
 endif()
 
 # Build library

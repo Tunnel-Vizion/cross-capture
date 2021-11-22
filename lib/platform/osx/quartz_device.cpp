@@ -50,6 +50,17 @@ namespace cross_capture::capture_device {
     }
 
     bool QuartzDevice::init() {
+        // This is a osx specific step. Since OSX 10.15 to have access to certain properties
+        // (such as a windows title) and to be able to capture the window content, we need to
+        // request access. This could perhaps be a configurable option.
+#ifdef OSX_REQUEST_CAPTURE_ACCESS
+        if (!CGRequestScreenCaptureAccess()) {
+            error_ = "Could not initialize Quartz Device, no screen capture access.";
+            return false;
+        }
+#endif
+
+        initialized_ = true;
         return true;
     }
 
