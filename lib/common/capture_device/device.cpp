@@ -16,10 +16,6 @@ namespace cross_capture::capture_device {
 		if (num_frames < 1) {
 			throw std::invalid_argument("num_frames must be >= 1");
 		}
-		
-		if (frame_delay < 0) {
-			throw std::invalid_argument("frame_delay must be >= 0");
-		}
 
 		if (!initialized_) {
 			throw std::runtime_error("device not initialized!");
@@ -28,8 +24,8 @@ namespace cross_capture::capture_device {
 		// TODO: Check out static dispatch, https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
 
 		switch (view->get_view_type()) {
-		case view_type::window: return do_window_capture(static_cast<const WindowView*>(view));
-		case view_type::monitor: return do_monitor_capture(static_cast<const MonitorView*>(view));
+		case view_type::window: return do_window_capture(dynamic_cast<const WindowView*>(view));
+		case view_type::monitor: return do_monitor_capture(dynamic_cast<const MonitorView*>(view));
 		case view_type::none: [[fallthrough]];
 		default: throw std::runtime_error("TODO: better exception message...");
 		}
@@ -44,7 +40,7 @@ namespace cross_capture::capture_device {
 			throw std::runtime_error("could not create gdi device");
 		}
 		
-		return gdi_device;
+		return std::move(gdi_device);
 #elif defined(CC_PLATFORM_OSX)
 		auto quartz_device = std::make_unique<QuartzDevice>();
 
@@ -53,7 +49,8 @@ namespace cross_capture::capture_device {
 		}
 		
 		return quartz_device;
-#endif
+#else
 		return nullptr;
+#endif
 	}
 }

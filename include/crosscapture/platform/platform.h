@@ -23,24 +23,37 @@ namespace cross_capture {
 		using window_handle_t = HWND;
 		using monitor_handle_t = HMONITOR;
 
-		using monitor_hdc = std::unique_ptr<std::remove_pointer<HDC>::type, BOOL(*)(HDC)>;
+		using monitor_hdc = std::unique_ptr<std::remove_pointer_t<HDC>, BOOL(*)(HDC)>;
 
 		using monitor_dim = long;
 		using String = std::wstring;
+#define STRING_LITERAL(x) L##x
 #elif defined(CC_PLATFORM_OSX)
 		using window_handle_t = CGWindowID;
 		using monitor_handle_t = CGDirectDisplayID;
 
 		using monitor_dim = double;
 		using String = std::string;
-		#define ToString(x) std::to_string(x)
+#define STRING_LITERAL(x) x
 #else
 		using window_handle_t = size_t;
 		using monitor_handle_t = size_t; // TODO: update
 
 		using monitor_dim = long;
 		using String = std::string;
+#define STRING_LITERAL(x) x
 #endif
+
+		template<typename T>
+		String to_string(T val) {
+			// FUCKING Windows.
+			// This function exists because Windows refuses to play ball.
+#ifdef CC_PLATFORM_WIN
+			return std::to_wstring(val);
+#else
+			return std::to_string(val);
+#endif
+		}
 
 		/**
 		 * Filter for window enumeration.
@@ -143,6 +156,6 @@ namespace cross_capture {
 		/**
 		 * **DEBUG METHOD (not standard and will be moved)**
 		 */
-		extern bool debug_save_bmp(platform::String file_name, capture_device::CapturedFrame capture);
+		extern bool debug_save_bmp(const platform::String& file_name, capture_device::CapturedFrame capture);
 	}
 }

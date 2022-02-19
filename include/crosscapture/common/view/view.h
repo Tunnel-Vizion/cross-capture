@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <vector>
 #include <string>
 #include "crosscapture/platform/platform.h"
@@ -78,7 +79,7 @@ namespace cross_capture {
 		 */
 		explicit ViewGroup(const std::vector<std::shared_ptr<View>>& views) : View(view_type::group), views_(views) {
 			NUM_VIEWS++;
-			name = "Group " + ToString(NUM_VIEWS);
+			name = STRING_LITERAL("Group ") + platform::to_string(NUM_VIEWS);
 		}
 
 		~ViewGroup() {

@@ -114,7 +114,11 @@ namespace cross_capture::platform {
 		return IsWindow(window_handle);
 	}
 
-	bool debug_save_bmp(platform::String file_name, capture_device::CapturedFrame capture) {
+	bool is_monitor_handle_valid(const monitor_handle_t monitor_handle) {
+		return false; // TODO: finish
+	}
+
+	bool debug_save_bmp(const platform::String& file_name, capture_device::CapturedFrame capture) {
 		BITMAPFILEHEADER bmf_header;
 		BITMAPINFOHEADER bi;
 
