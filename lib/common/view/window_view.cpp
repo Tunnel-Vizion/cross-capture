@@ -13,7 +13,7 @@ namespace cross_capture {
 		//return window_data_->handle; // like MonitorView, check this is suitable
 	}
 
-	platform::String WindowView::get_name() const {
+	std::string WindowView::get_name() const {
 		// TODO: review this method and the WindowData struct for duplicate
 		// data
 		return platform::get_window_title(window_data_->handle);

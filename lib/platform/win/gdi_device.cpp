@@ -2,7 +2,7 @@
 #include "crosscapture/common/view/monitor_view.h"
 #include "crosscapture/common/view/window_view.h"
 
-#include <GdiplusInit.h>
+#include <gdiplusinit.h>
 #include <stdexcept>
 
 namespace cross_capture::capture_device {

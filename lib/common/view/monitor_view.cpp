@@ -14,8 +14,8 @@ namespace cross_capture {
 		return reinterpret_cast<size_t>(monitor_data_->handle); // TODO: check this is sufficient
 	}
 
-	platform::String MonitorView::get_name() const {
-		return monitor_data_->name;
+	std::string MonitorView::get_name() const {
+		return platform::wstr_to_str(monitor_data_->name);
 	}
 
 	bool MonitorView::is_valid() const {

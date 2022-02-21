@@ -48,7 +48,7 @@ namespace cross_capture {
 			bool initialized_ = false;
 			
 			// Initialization error
-			platform::String error_;
+			std::string error_;
 
 			explicit Device(const capture_device_type device_type)
 				: device_type_(device_type) {}
@@ -95,7 +95,7 @@ namespace cross_capture {
 			 * 
 			 * @returns error string.
 			 */
-			[[nodiscard]] const platform::String& get_error() const { return error_; }
+			[[nodiscard]] const std::string& get_error() const { return error_; }
 
 			/**
 			 * Captures single frame from given view.
