@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <vector>
 #include <string>
 #include "crosscapture/platform/platform.h"
@@ -43,7 +44,7 @@ namespace cross_capture {
 		 * 
 		 * @returns name of the view.
 		 */
-		virtual platform::String get_name() const = 0;
+		virtual std::string get_name() const = 0;
 
 		/**
 		 * Returns view type.
@@ -68,7 +69,7 @@ namespace cross_capture {
 		static size_t NUM_VIEWS;
 
 		std::vector<std::shared_ptr<View>> views_;
-		platform::String name = platform::String();
+		std::string name = std::string();
 	protected:
 		/**
 		 * Constructs a view group.
@@ -78,7 +79,7 @@ namespace cross_capture {
 		 */
 		explicit ViewGroup(const std::vector<std::shared_ptr<View>>& views) : View(view_type::group), views_(views) {
 			NUM_VIEWS++;
-			name = "Group " + ToString(NUM_VIEWS);
+			name = "Group " + std::to_string(NUM_VIEWS);
 		}
 
 		~ViewGroup() {
@@ -104,7 +105,7 @@ namespace cross_capture {
 		 * 
 		 * @returns name of the view.
 		 */
-		platform::String get_name() const override {
+		std::string get_name() const override {
 			return name;
 		}
 
@@ -113,7 +114,7 @@ namespace cross_capture {
 		 * 
 		 * @param name name of the view.
 		 */
-		void set_name(const platform::String& name) {
+		void set_name(const std::string& name) {
 			this->name = name;
 		}
 

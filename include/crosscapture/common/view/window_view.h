@@ -21,7 +21,7 @@ namespace cross_capture {
 		 * 
 		 * @returns name of the view.
 		 */
-		platform::String get_name() const override;
+		std::string get_name() const override;
 
 		/**
 		 * Checks whether view is valid for capture.

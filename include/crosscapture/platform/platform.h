@@ -23,23 +23,20 @@ namespace cross_capture {
 		using window_handle_t = HWND;
 		using monitor_handle_t = HMONITOR;
 
-		using monitor_hdc = std::unique_ptr<std::remove_pointer<HDC>::type, BOOL(*)(HDC)>;
+		using monitor_hdc = std::unique_ptr<std::remove_pointer_t<HDC>, BOOL(*)(HDC)>;
 
 		using monitor_dim = long;
-		using String = std::wstring;
 #elif defined(CC_PLATFORM_OSX)
 		using window_handle_t = CGWindowID;
 		using monitor_handle_t = CGDirectDisplayID;
 
 		using monitor_dim = double;
-		using String = std::string;
-		#define ToString(x) std::to_string(x)
 #else
 		using window_handle_t = size_t;
 		using monitor_handle_t = size_t; // TODO: update
 
 		using monitor_dim = long;
-		using String = std::string;
+#define STRING_LITERAL(x) x
 #endif
 
 		/**
@@ -61,7 +58,7 @@ namespace cross_capture {
 			window_handle_t handle;
 
 			// window title
-			platform::String title;
+			std::wstring title;
 		};
 
 		/**
@@ -76,7 +73,7 @@ namespace cross_capture {
 #endif
 
 			// monitor title
-			platform::String name {};
+			std::wstring name {};
 
 			// monitor width
 			monitor_dim width = 0;
@@ -120,7 +117,7 @@ namespace cross_capture {
 		 *
 		 * @returns window title.
 		 */
-		extern platform::String get_window_title(window_handle_t window_handle);
+		extern std::string get_window_title(window_handle_t window_handle);
 
 		/**
 		 * Verifies the state of a window handle.
@@ -143,6 +140,58 @@ namespace cross_capture {
 		/**
 		 * **DEBUG METHOD (not standard and will be moved)**
 		 */
-		extern bool debug_save_bmp(platform::String file_name, capture_device::CapturedFrame capture);
+		extern bool debug_save_bmp(const std::string& file_name, capture_device::CapturedFrame capture);
+
+#ifdef CC_PLATFORM_WIN
+		// credits: https://stackoverflow.com/questions/6691555/converting-narrow-string-to-wide-string
+
+		/**
+		 * Converts string to a wide string.
+		 *
+		 * @param str string to be converted.
+		 *
+		 * @returns wide string from string.
+		 */
+		inline std::wstring str_to_wstr(const std::string& str) {
+			if (str.empty()) {
+				return std::wstring();
+			}
+
+			// determine new string length
+			const size_t new_str_len = ::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), nullptr, 0);
+
+			// new string
+			std::wstring result(new_str_len, L'\0');
+
+			// old string -> new string
+			::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), &result[0], result.length());
+
+			return result;
+		}
+
+		/**
+		 * Converts wide strings to strings.
+		 *
+		 * @param str wide string to convert.
+		 *
+		 * @returns string from wide string.
+		 */
+		inline std::string wstr_to_str(const std::wstring& str) {
+			if (str.empty()) {
+				return std::string();
+			}
+
+			// determine new string length
+			const size_t new_str_len = ::WideCharToMultiByte(CP_UTF8, 0, str.c_str(), str.length(), nullptr, 0, nullptr, nullptr);
+
+			// new string
+			std::string result(new_str_len, L'\0');
+
+			// old string -> new string
+			::WideCharToMultiByte(CP_UTF8, 0, str.c_str(), str.length(), &result[0], result.length(), nullptr, nullptr);
+
+			return result;
+		}
+#endif
 	}
 }

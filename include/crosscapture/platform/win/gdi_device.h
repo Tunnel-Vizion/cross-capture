@@ -10,10 +10,7 @@ namespace cross_capture {
 	class MonitorView;
 
 	namespace capture_device {
-		class GDIDevice : public Device {
-			// Handle to Device Context.
-			HDC hdc_ {};
-			
+		class GDIDevice final : public Device {
 			Gdiplus::GdiplusStartupInput input_;
 			ULONG_PTR gdi_plus_token_ {};
 
@@ -21,7 +18,7 @@ namespace cross_capture {
 			CapturedFrame do_window_capture(const WindowView* view) override;
 		public:
 			explicit GDIDevice();
-			~GDIDevice();
+			~GDIDevice() override;
 
 			bool init() override;
 			bool cleanup();

@@ -26,7 +26,7 @@ namespace cross_capture::platform {
             auto window_title = reinterpret_cast<CFStringRef>(CFDictionaryGetValue(window_dict, kCGWindowName));
 
             // cast window_title to String
-            platform::String title;
+            std::string title;
             if (window_title != nullptr) {
                 title = CFStringGetCStringPtr(window_title, kCFStringEncodingUTF8);
 
@@ -79,9 +79,9 @@ namespace cross_capture::platform {
         return monitors;
     }
 
-    platform::String get_window_title(window_handle_t window_handle) {
+    std::string get_window_title(window_handle_t window_handle) {
         // TODO: implement
-        return platform::String();
+        return std::string();
     }
 
     bool is_window_handle_valid(const window_handle_t window_handle) {

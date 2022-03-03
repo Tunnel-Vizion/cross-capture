@@ -2,22 +2,21 @@
 #include "crosscapture/common/view/monitor_view.h"
 #include "crosscapture/common/view/window_view.h"
 
-#include <GdiplusInit.h>
+#include <gdiplusinit.h>
 #include <stdexcept>
 
 namespace cross_capture::capture_device {
 	CapturedFrame GDIDevice::do_monitor_capture(const MonitorView* view) {
-		auto* const monitor_data = view->get_monitor_data();
+		const auto* const monitor_data = view->get_monitor_data();
+		HDC hdc = nullptr;
 
-		if (!hdc_) {
-			hdc_ = CreateDC(nullptr, monitor_data->name.c_str(), nullptr, nullptr);
+		hdc = CreateDC(monitor_data->name.c_str(), nullptr, nullptr, nullptr);
 
-			if (!hdc_) {
-				throw std::runtime_error("failed to create monitor view!");
-			}
+		if (!hdc) {
+			throw std::runtime_error("failed to create monitor view!");
 		}
 
-		auto* const monitor_compat_dc = CreateCompatibleDC(hdc_);
+		auto* const monitor_compat_dc = CreateCompatibleDC(hdc);
 		
 		SetStretchBltMode(monitor_compat_dc, HALFTONE);
 		
@@ -40,7 +39,7 @@ namespace cross_capture::capture_device {
 		bitmap_info.biClrUsed = 0;
 		bitmap_info.biClrImportant = 0;
 
-		auto* const bitmap = CreateCompatibleBitmap(hdc_, width, height);
+		auto* const bitmap = CreateCompatibleBitmap(hdc, width, height);
 	
 		SelectObject(monitor_compat_dc, bitmap);
 
@@ -59,7 +58,7 @@ namespace cross_capture::capture_device {
 			0,
 			width, 
 			height, 
-			hdc_,
+			hdc,
 			top,
 			0, 
 			width, 
@@ -75,8 +74,13 @@ namespace cross_capture::capture_device {
 			reinterpret_cast<BITMAPINFO*>(&bitmap_info), 
 			DIB_RGB_COLORS);
 		
-		DeleteDC(monitor_compat_dc);
-		//DeleteDC(hdc_);
+		if (!DeleteDC(monitor_compat_dc)) {
+			throw std::runtime_error("failed to delete monitor dc!");
+		}
+		if (!DeleteDC(hdc)) {
+			throw std::runtime_error("failed to delete hdc!");
+		}
+		
 		return cap;
 	}
 
@@ -94,7 +98,7 @@ namespace cross_capture::capture_device {
 	}
 	
 	bool GDIDevice::init() {
-		if (Gdiplus::GdiplusStartup(&gdi_plus_token_, &input_, NULL) == Gdiplus::Status::Ok) {
+		if (Gdiplus::GdiplusStartup(&gdi_plus_token_, &input_, nullptr) == Gdiplus::Status::Ok) {
 			initialized_ = true;
 			return true;
 		}
