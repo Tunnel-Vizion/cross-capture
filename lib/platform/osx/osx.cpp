@@ -8,15 +8,15 @@
 namespace cross_capture::platform {
     std::vector<WindowData> enumerate_windows(WindowEnumerateFilter filter) {
         // get list of all windows
-        auto result = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID);
-        if (result == nullptr) {
+        auto window_info_list = CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID);
+        if (window_info_list == nullptr) {
             throw std::runtime_error("CGWindowListCopyWindowInfo failed");
         }
         
-        const auto num_windows = CFArrayGetCount(result);
+        const auto num_windows = CFArrayGetCount(window_info_list);
         // move values into array
         CFDictionaryRef window_info[num_windows];
-        CFArrayGetValues(result, CFRangeMake(0, num_windows), reinterpret_cast<const void**>(&window_info));
+        CFArrayGetValues(window_info_list, CFRangeMake(0, num_windows), reinterpret_cast<const void**>(&window_info));
 
         // iterate over windows
         std::vector<WindowData> windows;
