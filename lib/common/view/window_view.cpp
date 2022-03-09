@@ -9,7 +9,8 @@ namespace cross_capture {
 	}
 
 	size_t WindowView::get_id() const {
-		return reinterpret_cast<size_t>(window_data_->handle);
+		return window_data_->handle;
+		//return reinterpret_cast<size_t>(window_data_->handle);
 		//return window_data_->handle; // like MonitorView, check this is suitable
 	}
 

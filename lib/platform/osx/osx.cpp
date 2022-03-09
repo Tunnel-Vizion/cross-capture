@@ -66,11 +66,11 @@ namespace cross_capture::platform {
             auto monitor_height = CGRectGetHeight(monitor_rect);
 
             // osx doesn't have a way to get the monitor name, so we'll just use the index
-            auto monitor_name = L"Monitor " + std::to_wstring(i);
+            auto monitor_name = "Monitor " + std::to_string(i);
             
             monitors.emplace_back(MonitorData {
                 monitor_id,
-                String(),
+                monitor_name,
                 monitor_width,
                 monitor_height
             });
@@ -87,4 +87,44 @@ namespace cross_capture::platform {
     bool is_window_handle_valid(const window_handle_t window_handle) {
 		return true;
 	}
+
+    bool debug_save_bmp(const std::string& file_name, capture_device::CapturedFrame frame) {
+        // Create bitmap context
+        auto bitmap_context = CGBitmapContextCreate(
+            frame.data.data(),
+            frame.width,
+            frame.height,
+            8,
+            frame.width * 4,
+            CGColorSpaceCreateDeviceRGB(),
+            kCGImageAlphaPremultipliedLast
+        );
+
+        // Create image from bitmap context
+        auto image = CGBitmapContextCreateImage(bitmap_context);
+
+        CFStringRef file_name_ref = CFStringCreateWithCString(kCFAllocatorDefault, (file_name + ".png").c_str(), kCFStringEncodingUTF8);
+
+        // Create image destination
+        auto image_destination = CGImageDestinationCreateWithURL(
+            CFURLCreateWithFileSystemPath(kCFAllocatorDefault, file_name_ref, kCFURLPOSIXPathStyle, false),
+            kUTTypePNG,
+            1,
+            nullptr
+        );
+
+        // Add image to image destination
+        CGImageDestinationAddImage(image_destination, image, nullptr);
+
+        // Write image to file
+        CGImageDestinationFinalize(image_destination);
+
+        // Clean up
+        CFRelease(image_destination);
+        CFRelease(image);
+        CFRelease(bitmap_context);
+        CFRelease(file_name_ref);
+
+        return true;
+    }
 }

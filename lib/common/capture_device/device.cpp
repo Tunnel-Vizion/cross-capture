@@ -33,7 +33,7 @@ namespace cross_capture::capture_device {
 	
 	std::unique_ptr<Device> get_suitable_capture_device() {
 		// TODO: Make this generic...
-#ifdef WIN32
+#ifdef CC_PLATFORM_WIN
 		auto gdi_device = std::make_unique<GDIDevice>();
 
 		if (!gdi_device->init()) {

@@ -21,16 +21,33 @@ namespace cross_capture::capture_device {
 
         // get bitmap size
         auto bitmap_size = image_width * image_height * (CGImageGetBitsPerPixel(image) / 8);
+        auto bit_data = CGDataProviderCopyData(CGImageGetDataProvider(image));
+
+        UInt8 * buf = (UInt8 *) CFDataGetBytePtr(bit_data); 
+        CFIndex length = CFDataGetLength(bit_data);
+        std::vector<unsigned int> bitmap(bitmap_size);
+
+        for (int i = 0; i < length; i+=4) {
+            int r = buf[i + 0];
+            int g = buf[i + 1];
+            int b = buf[i + 2];
+            int a = buf[i + 3];
+
+            uint32_t pixel = (a << 24) | (r << 16) | (g << 8) | b;
+            bitmap[i/4] = pixel;
+        }
 
         CapturedFrame cap {
                 static_cast<size_t>(image_width),
                 static_cast<size_t>(image_height),
                 bitmap_size,
-                std::vector<unsigned int>(bitmap_size),
+                std::move(bitmap),
         };
 
         // Release the image
         CGImageRelease(image);
+        CFRelease(bit_data);
+        CGDataProviderRelease(CGImageGetDataProvider(image));
         return cap;
     }
 

@@ -58,7 +58,11 @@ namespace cross_capture {
 			window_handle_t handle;
 
 			// window title
+#ifdef CC_PLATFORM_WIN
 			std::wstring title;
+#else
+			std::string title;
+#endif
 		};
 
 		/**
@@ -73,7 +77,11 @@ namespace cross_capture {
 #endif
 
 			// monitor title
+#ifdef CC_PLATFORM_WIN
 			std::wstring name {};
+#else
+			std::string name {};
+#endif
 
 			// monitor width
 			monitor_dim width = 0;
