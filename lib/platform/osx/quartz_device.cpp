@@ -14,24 +14,51 @@ namespace cross_capture::capture_device {
         if (image == nullptr) {
             throw std::runtime_error("Failed to capture display");
         }
+        
+        return process_image(image);
+    }
 
+    CapturedFrame QuartzDevice::do_window_capture(const WindowView *view) {
+        auto image = CGWindowListCreateImage(
+                CGRectNull,
+                kCGWindowListOptionIncludingWindow,
+                view->get_id(),
+                kCGWindowImageBoundsIgnoreFraming);
+
+        // failed to capture display, throw exception
+        if (image == nullptr) {
+            throw std::runtime_error("Failed to capture display");
+        }
+
+        return process_image(image);
+    }
+
+    CapturedFrame QuartzDevice::process_image(CGImageRef image) {
         // get image size
         auto image_width = CGImageGetWidth(image);
         auto image_height = CGImageGetHeight(image);
 
+        // get bits per pixel
+        auto bits_per_pixel = CGImageGetBitsPerPixel(image);
+
+        // get bytes per row
+        auto bytes_per_row = CGImageGetBytesPerRow(image);
+
         // get bitmap size
         auto bitmap_size = image_width * image_height * (CGImageGetBitsPerPixel(image) / 8);
-        auto bit_data = CGDataProviderCopyData(CGImageGetDataProvider(image));
 
-        UInt8 * buf = (UInt8 *) CFDataGetBytePtr(bit_data); 
+        // get bitmap data
+        auto bit_data = CGDataProviderCopyData(CGImageGetDataProvider(image));
+        
+        UInt8 * buf = (UInt8 *) CFDataGetBytePtr(bit_data);
         CFIndex length = CFDataGetLength(bit_data);
-        std::vector<unsigned int> bitmap(bitmap_size);
+        std::vector<uint32_t> bitmap(bitmap_size);
 
         for (int i = 0; i < length; i+=4) {
-            int r = buf[i + 0];
-            int g = buf[i + 1];
-            int b = buf[i + 2];
-            int a = buf[i + 3];
+            auto r = buf[i + 0];
+            auto g = buf[i + 1];
+            auto b = buf[i + 2];
+            auto a = buf[i + 3];
 
             uint32_t pixel = (a << 24) | (r << 16) | (g << 8) | b;
             bitmap[i/4] = pixel;
@@ -42,6 +69,8 @@ namespace cross_capture::capture_device {
                 static_cast<size_t>(image_height),
                 bitmap_size,
                 std::move(bitmap),
+                bytes_per_row,
+                bits_per_pixel
         };
 
         // Release the image
@@ -49,12 +78,6 @@ namespace cross_capture::capture_device {
         CFRelease(bit_data);
         CGDataProviderRelease(CGImageGetDataProvider(image));
         return cap;
-    }
-
-    CapturedFrame QuartzDevice::do_window_capture(const WindowView *view) {
-        return CapturedFrame {
-            0, 0, 0, std::vector<unsigned int>()
-        };
     }
 
     QuartzDevice::QuartzDevice() 
@@ -71,9 +94,11 @@ namespace cross_capture::capture_device {
         // (such as a windows title) and to be able to capture the window content, we need to
         // request access. This could perhaps be a configurable option.
 #ifdef OSX_REQUEST_CAPTURE_ACCESS
-        if (!CGRequestScreenCaptureAccess()) {
-            error_ = "Could not initialize Quartz Device, no screen capture access.";
-            return false;
+        if (CGPreflightScreenCaptureAccess() != kCGErrorSuccess) {
+            if (!CGRequestScreenCaptureAccess()) {
+                error_ = "Could not initialize Quartz Device, no screen capture access.";
+                return false;
+            }
         }
 #endif
 

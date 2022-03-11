@@ -38,6 +38,12 @@ namespace cross_capture {
 
 			// raw byte data
 			std::vector<unsigned int> data;
+
+			// bytes per row
+			size_t bytes_per_row;
+
+			// bits per pixel
+			size_t bits_per_pixel;
 		};
 
 		class Device {

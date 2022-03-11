@@ -26,16 +26,19 @@ namespace cross_capture::platform {
             auto window_title = reinterpret_cast<CFStringRef>(CFDictionaryGetValue(window_dict, kCGWindowName));
 
             // cast window_title to String
-            std::string title;
+            std::string title;  
             if (window_title != nullptr) {
-                title = CFStringGetCStringPtr(window_title, kCFStringEncodingUTF8);
-
-                if (filter.include_empty_titles) {
-                    continue;
+                auto x = CFStringGetCStringPtr(window_title, kCFStringEncodingUTF8);
+                if (x != nullptr) {
+                    title = x;
                 }
             }
 
-            unsigned int window_handle;
+            if (!filter.include_empty_titles && title.empty()) {
+                continue;
+            }
+
+            CGWindowID window_handle;
             CFNumberGetValue(window_id, kCFNumberIntType, &window_handle);
 
             windows.emplace_back(WindowData {
@@ -108,7 +111,7 @@ namespace cross_capture::platform {
         // Create image destination
         auto image_destination = CGImageDestinationCreateWithURL(
             CFURLCreateWithFileSystemPath(kCFAllocatorDefault, file_name_ref, kCFURLPOSIXPathStyle, false),
-            kUTTypePNG,
+            kUTTypePNG, // TODO: fix warning
             1,
             nullptr
         );

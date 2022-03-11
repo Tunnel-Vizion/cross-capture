@@ -10,6 +10,7 @@ namespace cross_capture {
         class QuartzDevice : public Device {
             CapturedFrame do_monitor_capture(const MonitorView* view) override;
             CapturedFrame do_window_capture(const WindowView* view) override;
+            CapturedFrame process_image(CGImageRef image);
         public:
             explicit QuartzDevice();
             ~QuartzDevice();

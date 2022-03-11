@@ -21,6 +21,15 @@ int main(int argc, char* argv[]) {
 			cross_capture::platform::debug_save_bmp("Monitor" + std::to_string(count), screenshot);
 			count++;
 		}
+
+		auto windows = cross_capture::platform::enumerate_windows(cross_capture::platform::WindowEnumerateFilter{});
+		for (auto window : windows) {
+			cross_capture::WindowView view(&window);
+			
+			const auto screenshot = device->do_capture(&view);
+			cross_capture::platform::debug_save_bmp(window.title, screenshot);
+			count++;
+		}
 	} catch (const std::exception& e) {
 		std::cerr << e.what() << std::endl;
 	}
