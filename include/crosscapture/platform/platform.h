@@ -36,7 +36,6 @@ namespace cross_capture {
 		using monitor_handle_t = size_t; // TODO: update
 
 		using monitor_dim = long;
-#define STRING_LITERAL(x) x
 #endif
 
 		/**

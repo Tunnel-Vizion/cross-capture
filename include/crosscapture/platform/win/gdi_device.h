@@ -16,6 +16,7 @@ namespace cross_capture {
 
 			CapturedFrame do_monitor_capture(const MonitorView* view) override;
 			CapturedFrame do_window_capture(const WindowView* view) override;
+			static CapturedFrame process_image(const HDC hdc, const long top, const long width, const long height);
 		public:
 			explicit GDIDevice();
 			~GDIDevice() override;

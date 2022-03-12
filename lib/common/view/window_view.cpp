@@ -9,9 +9,13 @@ namespace cross_capture {
 	}
 
 	size_t WindowView::get_id() const {
+#ifdef CC_PLATFORM_WIN
+		return reinterpret_cast<size_t>(window_data_->handle);
+#else
 		return window_data_->handle;
 		//return reinterpret_cast<size_t>(window_data_->handle);
 		//return window_data_->handle; // like MonitorView, check this is suitable
+#endif
 	}
 
 	std::string WindowView::get_name() const {

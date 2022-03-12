@@ -11,14 +11,19 @@ namespace cross_capture {
 	}
 	
 	size_t MonitorView::get_id() const {
+#ifdef CC_PLATFORM_WIN
+		return reinterpret_cast<size_t>(monitor_data_->handle);
+#else
 		return monitor_data_->handle; // TODO: check this is sufficient
+#endif
 	}
 
 	std::string MonitorView::get_name() const {
 #ifdef CC_PLATFORM_WIN		
-		return platform::str(monitor_data_->name);
-#endif
+		return platform::wstr_to_str(monitor_data_->name);
+#else
 		return monitor_data_->name;
+#endif
 	}
 
 	bool MonitorView::is_valid() const {

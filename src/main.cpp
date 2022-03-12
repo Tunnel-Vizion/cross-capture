@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 			cross_capture::WindowView view(&window);
 			
 			const auto screenshot = device->do_capture(&view);
-			cross_capture::platform::debug_save_bmp(window.title, screenshot);
+			cross_capture::platform::debug_save_bmp(cross_capture::platform::wstr_to_str(window.title), screenshot);
 			count++;
 		}
 	} catch (const std::exception& e) {
