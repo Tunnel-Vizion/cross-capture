@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Include dir
 include_directories(include)
+include_directories(include/crosscapture)
 
 if(WIN32)
 	set(PLATFORM_DIR "win")
@@ -26,6 +27,10 @@ elseif(APPLE)
 	if (CROSS_CAPTURE_BUILD_CLI)
 		add_definitions(-DOSX_REQUEST_CAPTURE_ACCESS)
 	endif(CROSS_CAPTURE_BUILD_CLI)
+elseif(UNIX AND NOT APPLE)
+	set(PLATFORM_DIR "linux")
+	# Add includes and libraries for Linux capture...
+
 endif()
 
 # Build library

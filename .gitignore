@@ -36,6 +36,7 @@
 
 # Visual Studio
 .vs/
+CMakeSettings.json
 
 # Visual Studio Code
 .vscode/

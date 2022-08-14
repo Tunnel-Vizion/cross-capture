@@ -4,4 +4,12 @@
 
 #pragma once
 
-#include "platform/Platform.h"
+#include <windef.h>
+#include <string>
+
+namespace crosscapture {
+	struct Display {
+		HMONITOR handle = nullptr;
+		std::string title;
+	};
+}
