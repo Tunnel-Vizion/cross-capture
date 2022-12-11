@@ -17,15 +17,15 @@ namespace {
 		constexpr auto buffer_len = MAX_PATH;
 		
 		auto& callback_struct = *reinterpret_cast<EnumerateWindowsCallbackStruct*>(result);
-		wchar_t window_title[buffer_len];
+		char window_title[buffer_len];
 
 		if (!callback_struct.filter.include_hidden && !IsWindowVisible(window_handle)) {
 			return TRUE;
 		}
 		
-		GetWindowTextW(window_handle, window_title, buffer_len);
+		GetWindowText(window_handle, window_title, buffer_len);
 
-		if (!callback_struct.filter.include_empty_titles && wcslen(window_title) == 0) {
+		if (!callback_struct.filter.include_empty_titles && strlen(window_title) == 0) {
 			return TRUE;
 		}
 		
@@ -103,11 +103,11 @@ namespace cross_capture::platform {
 	}
 	
 	std::string get_window_title(const window_handle_t window_handle) {
-		wchar_t window_title[MAX_PATH];
+		char window_title[MAX_PATH];
 
-		GetWindowTextW(window_handle, window_title, MAX_PATH);
+		GetWindowText(window_handle, window_title, MAX_PATH);
 
-		return std::string { platform::wstr_to_str(window_title) };
+		return std::string { window_title };
 	}
 
 	bool is_window_handle_valid(const window_handle_t window_handle) {
@@ -134,7 +134,7 @@ namespace cross_capture::platform {
 		bi.biClrUsed = 0;
 		bi.biClrImportant = 0;
 
-		auto* const file = CreateFile(std::wstring(platform::str_to_wstr(file_name) + L".bmp").c_str(),
+		auto* const file = CreateFile((file_name + ".bmp").c_str(),
 			GENERIC_WRITE,
 			0,
 			nullptr,
@@ -150,9 +150,9 @@ namespace cross_capture::platform {
 		bmf_header.bfSize = dw_sizeof_dib;
 		bmf_header.bfType = 0x4D42;
 
-		WriteFile(file, LPWSTR(&bmf_header), sizeof(BITMAPFILEHEADER), &dw_bytes_written, nullptr);
-		WriteFile(file, LPWSTR(&bi), sizeof(BITMAPINFOHEADER), &dw_bytes_written, nullptr);
-		WriteFile(file, LPWSTR(&capture.data[0]), dw_bmp_size, &dw_bytes_written, nullptr);
+		WriteFile(file, (&bmf_header), sizeof(BITMAPFILEHEADER), &dw_bytes_written, nullptr);
+		WriteFile(file, (&bi), sizeof(BITMAPINFOHEADER), &dw_bytes_written, nullptr);
+		WriteFile(file, (&capture.data[0]), dw_bmp_size, &dw_bytes_written, nullptr);
 
 		CloseHandle(file);
 

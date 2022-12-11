@@ -57,11 +57,7 @@ namespace cross_capture {
 			window_handle_t handle;
 
 			// window title
-#ifdef CC_PLATFORM_WIN
-			std::wstring title;
-#else
 			std::string title;
-#endif
 		};
 
 		/**
@@ -76,11 +72,7 @@ namespace cross_capture {
 #endif
 
 			// monitor title
-#ifdef CC_PLATFORM_WIN
-			std::wstring name {};
-#else
 			std::string name {};
-#endif
 
 			// monitor width
 			monitor_dim width = 0;
@@ -149,7 +141,7 @@ namespace cross_capture {
 		 */
 		extern bool debug_save_bmp(const std::string& file_name, capture_device::CapturedFrame capture);
 
-#ifdef CC_PLATFORM_WIN
+#if defined(CC_PLATFORM_WIN) && defined(CC_USE_DEPRECATED)
 		// credits: https://stackoverflow.com/questions/6691555/converting-narrow-string-to-wide-string
 
 		/**

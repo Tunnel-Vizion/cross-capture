@@ -60,6 +60,10 @@ namespace cross_capture::capture_device {
 
 		const size_t bitmap_size = ((width * bitmap_info.biBitCount + 31) / 32) * 4 * height;
 
+		if (bitmap_size < 0) {
+			throw std::runtime_error("tried to process empty bitmap!");
+		}
+
 		CapturedFrame cap{
 			static_cast<size_t>(width),
 			static_cast<size_t>(height),
